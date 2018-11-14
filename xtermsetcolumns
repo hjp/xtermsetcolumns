@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+
+use v5.10;
+use warnings;
+use strict;
+
+my $newcolumns;
+
+if ($0 =~ m{(\d+)col[^/]*}) {
+    $newcolumns = $1;
+} elsif (@ARGV) {
+    $newcolumns = $ARGV[0];
+} else {
+    say STDERR "Usage: $0 columns";
+    exit(1);
+}
+my $geometry = `xtermcontrol --get-geometry`;
+
+if ($geometry =~ /(\d+)x(\d+)/) {
+    my ($cols, $rows) = ($1, $2);
+    say STDERR "resizing from ${cols}x${rows} to ${newcolumns}x${rows}";
+    system("xtermcontrol", "--geometry", "${newcolumns}x${rows}");
+} else {
+    say STDERR "$0: Cannot parse geometry $geometry";
+}
